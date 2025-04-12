@@ -12,11 +12,17 @@ spec:
   policyTypes:
     - Ingress
   ingress:
+    {{- range .Values.networkPolicy.extraIngress }}
     - from:
+        {{- range .from }}
         - podSelector:
             matchLabels:
-              app: {{ .Values.networkPolicy.allowedApp }}
+              {{- toYaml .podSelector.matchLabels | nindent 14 }}
+        {{- end }}
       ports:
+        {{- range .ports }}
         - protocol: TCP
-          port: {{ .Values.service.port }}
+          port: {{ .port }}
+        {{- end }}
+    {{- end }}
 {{- end }}

@@ -13,12 +13,12 @@ To install the chart with the release name `my-pgbouncer`:
 
 ```bash
 # OCI
-helm install my-pgbouncer oci://ghcr.io/icoretech/charts/pgbouncer
+helm install my-pgbouncer oci://ghcr.io/us579/charts/pgbouncer
 ```
 
 ```bash
-helm repo add icoretech https://icoretech.github.io/helm
-helm install my-pgbouncer icoretech/pgbouncer
+helm repo add us579 https://us579.github.io/helm-charts
+helm install my-pgbouncer us579/pgbouncer
 ```
 
 This command deploys a PgBouncer instance with default configuration.
@@ -35,11 +35,11 @@ The following table lists the configurable parameters of the PgBouncer chart and
 apiVersion: source.toolkit.fluxcd.io/v1beta2
 kind: HelmRepository
 metadata:
-  name: icoretech
+  name: us579
 spec:
   interval: 30m
   type: oci
-  url: oci://ghcr.io/icoretech/charts
+  url: oci://ghcr.io/us579/charts
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
@@ -54,7 +54,7 @@ spec:
       version: ">= 2.4.0"
       sourceRef:
         kind: HelmRepository
-        name: icoretech
+        name: us579
         namespace: flux-system
   interval: 3m0s
   install:
