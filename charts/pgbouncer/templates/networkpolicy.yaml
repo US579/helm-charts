@@ -12,6 +12,12 @@ spec:
   policyTypes:
     - Ingress
   ingress:
+    {{- if .Values.networkPolicy.allowAllIngress }}
+    # Allow ingress from all sources
+    - {}
+    {{- else }}
+    # Optionally support additional ingress sources with labels
+    {{- if .Values.networkPolicy.extraIngress }}
     {{- range .Values.networkPolicy.extraIngress }}
     - from:
         {{- range .from }}
@@ -24,5 +30,7 @@ spec:
         - protocol: TCP
           port: {{ .port }}
         {{- end }}
+    {{- end }}
+    {{- end }}
     {{- end }}
 {{- end }}
