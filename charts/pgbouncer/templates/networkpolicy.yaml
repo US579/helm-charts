@@ -16,14 +16,6 @@ spec:
     # Allow ingress from all sources
     - {}
     {{- else }}
-    {{- $namespace := .Values.networkPolicy.allowFromNamespace }}
-    {{- if $namespace }}
-    # Allow ingress from specified namespace
-    - from:
-        - namespaceSelector:
-            matchLabels:
-              kubernetes.io/metadata.name: {{ $namespace }}
-    {{- end }}
     {{- if .Values.networkPolicy.extraIngress }}
     # Allow ingress from extra configured sources
     {{- range .Values.networkPolicy.extraIngress }}
@@ -33,11 +25,13 @@ spec:
             matchLabels:
               {{- toYaml .podSelector.matchLabels | nindent 14 }}
         {{- end }}
-      ports:
-        {{- range .ports }}
-        - protocol: TCP
-          port: {{ .port }}
-        {{- end }}
+    {{- end }}
+    {{- if .ports }}
+    ports:
+      {{- range .ports }}
+      - protocol: TCP
+        port: {{ .port }}
+      {{- end }}
     {{- end }}
     {{- end }}
     {{- end }}
