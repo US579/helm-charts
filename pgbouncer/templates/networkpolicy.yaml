@@ -1,0 +1,38 @@
+{{- if .Values.networkPolicy.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "pgbouncer.fullname" . }}
+  labels:
+    {{- include "pgbouncer.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      {{- include "pgbouncer.selectorLabels" . | nindent 6 }}
+  policyTypes:
+    - Ingress
+  ingress:
+    {{- if .Values.networkPolicy.allowAllIngress }}
+    # Allow ingress from all sources
+    - {}
+    {{- else }}
+    {{- if .Values.networkPolicy.extraIngress }}
+    # Allow ingress from extra configured sources
+    {{- range .Values.networkPolicy.extraIngress }}
+    - from:
+        {{- range .from }}
+        - podSelector:
+            matchLabels:
+              {{- toYaml .podSelector.matchLabels | nindent 14 }}
+        {{- end }}
+    {{- end }}
+    {{- if .ports }}
+    ports:
+      {{- range .ports }}
+      - protocol: TCP
+        port: {{ .port }}
+      {{- end }}
+    {{- end }}
+    {{- end }}
+    {{- end }}
+{{- end }}
